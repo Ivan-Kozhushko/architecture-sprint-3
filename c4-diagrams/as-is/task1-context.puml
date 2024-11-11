@@ -1,0 +1,16 @@
+@startuml
+title Система "Теплый Дом"
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Person(user, "User", "Пользователь системы Теплый Дом")
+
+System(monoliteSystem, "Теплый Дом", "Монолит компании Теплый дом")
+System_Ext(heatingSystem, "Heating System", "Внешние приборы(датчики, сенсоры) умного дома")
+
+Rel(user, monoliteSystem, "Использует для регулировки отопления и просмотра температуры")
+Rel(monoliteSystem, heatingSystem, "Управляет отоплением, получает данные о температуре от датчиков")
+
+@enduml
