@@ -1,0 +1,47 @@
+@startuml
+entity "User" as user {
+    * id : Long
+    --
+    name : String
+    email : String
+    phone : Long
+    password : String
+}
+
+entity "House" as house {
+    * id : Long
+    --
+    user_id : Long
+    address : String
+}
+
+entity "Device" as device {
+    * id : Long
+    --
+    type_id : Long
+    house_id : Long
+    status : String
+}
+
+entity "DeviceType" as deviceType {
+    * id : Long
+    --
+    name : String
+}
+
+entity "Scenario" as scenario {
+    * id : Long
+    --
+    device_id : Long
+    name : String
+    isOn : boolean
+    startEvent : Timestamp
+    endEvent : Timestamp
+}
+
+user ||--o{ house
+house ||--o{ user
+house ||--o{ device 
+device ||--o| deviceType 
+device ||--o{ scenario 
+@enduml

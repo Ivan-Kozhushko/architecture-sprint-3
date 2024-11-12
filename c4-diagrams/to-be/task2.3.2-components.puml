@@ -1,0 +1,23 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title Scenario Management Service. Components.
+
+
+Container_Boundary(scenarioManagmentService, "Scenario Management Service") {
+    Component(apiGateway, "API Gateway", "Обрабатывает входящие запросы и направляет их к соответствующим сервисам")
+    Component(scenarioController, "Scenario Controller", "HTTP запросы для настройки сценариев")
+    Component(scenarioService, "Scenario Service", "Содержит логику выполнения сценариев")
+    Component(scenarioRepository, "Scenario Repository", "Обрабатывает операции с базой данных для сценариев")
+    Component(kafkaConsumer, "Kafka Consumer", "Получатель событий от Kafka")
+}
+
+
+
+Rel(apiGateway, scenarioController, "Направляет запросы к")
+
+Rel(scenarioController, scenarioService, "Использует")
+Rel(scenarioService, scenarioRepository, "Использует")
+Rel(scenarioService, kafkaConsumer, "Подписан на события от")
+
+@enduml
