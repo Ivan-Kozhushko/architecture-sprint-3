@@ -7,10 +7,15 @@ top to bottom direction
 
 Person(user, "User", "Пользователь системы Теплый Дом")
 
-System(monoliteSystem, "Теплый Дом", "Монолит компании Теплый дом")
+Container(mobileApp, "Mobile App", "Мобильное приложение")
+
+System(monoliteSystem, "Теплый Дом", "Монолит компании Теплый дом: Java")
+ContainerDb(monoliteSystemDb, "Monolite System Db", "container: PostgreSql", "Хранит информацию о домах")
 System_Ext(heatingSystem, "Heating System", "Внешние приборы(датчики, сенсоры) умного дома")
 
-Rel(user, monoliteSystem, "Использует для регулировки отопления и просмотра температуры")
-Rel(monoliteSystem, heatingSystem, "Управляет отоплением, получает данные о температуре от датчиков")
+Rel(user, mobileApp, "Использует для регулировки отопления и просмотра температуры")
+Rel(mobileApp, monoliteSystem, "Использует для регулировки отопления и просмотра температуры", "http")
+Rel(monoliteSystem, monoliteSystemDb, "Читает из и записывает в ", "SQL/TCP")
+Rel(monoliteSystem, heatingSystem, "Управляет отоплением, получает данные о температуре от датчиков", "http")
 
 @enduml
