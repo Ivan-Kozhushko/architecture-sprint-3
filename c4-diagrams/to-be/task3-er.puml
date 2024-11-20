@@ -27,7 +27,7 @@ entity "Device" as device {
     --
     + type_id : Long
     + house_id : Long
-    + isOn : boolean
+    + status : enum
 }
 
 entity "DeviceType" as deviceType {

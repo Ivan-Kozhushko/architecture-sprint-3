@@ -6,9 +6,9 @@ title Система "Теплый Дом". Containers.
 Person(user, "User", "Пользователь системы Теплый Дом")
 
 Container(mobileApp, "Mobile App", "saa", "Мобильное приложение")
+Container(apiGateway, "API Gateway", "Обрабатывает входящие запросы и направляет их к соответствующим сервисам")
 
 System_Boundary(SmartHomeSystem, 'Система \"Теплый Дом\"') {
-    Container(apiGateway, "API Gateway", "Обрабатывает входящие запросы и направляет их к соответствующим сервисам")
     Container(deviceManagementService, "Device Management Service", "Java/Spring", "Управляет функциями устройств")
     Container(scenarioManagmentService, "Scenario Management Service", "Java/Spring", "Управляет автоматическими сценариями")
     Container(userManagmentService, "User Management Service", "Java/Spring","Управляет информацией о пользователях и аутентификацией")
@@ -49,6 +49,5 @@ Rel(scenarioManagmentService, kafka, "Подписан на события от"
 
 Container_Ext(sensor, "Sensor", "Датчики", "Отправляет данные в систему")
 Rel(sensor, deviceManagementService, "Отправляет данные к", "HTTP/REST")
-Rel(sensor, deviceMonitoringService, "Отправляет данные мониторинга к", "HTTP/REST")
 
 @enduml
