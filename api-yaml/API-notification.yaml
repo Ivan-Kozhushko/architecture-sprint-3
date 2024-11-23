@@ -1,0 +1,110 @@
+openapi: 3.0.3
+info:
+  title: Notification API
+  description: API for notification in the "Warm Home" control system.
+  version: 1.0.0
+servers:
+  - url: 'https://warm.home.come/notification-management'
+    description: Production server
+  - url: 'https://dev.warm.home.come/notification-management'
+    description: Developer server
+paths:
+  /notifications/send:
+    post:
+      summary: Send notification to user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                message:
+                  type: string
+                channel:
+                  type: string
+                  enum: [email, push, SMS]
+      responses:
+        '200':
+          description: Notification sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationStatus'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /notifications/history/{userId}:
+    get:
+      summary: Get notification history for a user
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Notification history received
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+          description: HTTP status code
+        message:
+          type: string
+          description: Error message
+      required:
+        - code
+        - message
+    OperationStatus:
+      type: object
+      properties:
+        operationStatus:
+          type: string
+    Notification:
+      type: object
+      properties:
+        notifications:
+          type: array
+          items:
+            type: object
+            properties:
+              message:
+                type: string
+              timestamp:
+                type: string
+                format: date-time
