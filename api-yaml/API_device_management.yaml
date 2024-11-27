@@ -9,12 +9,12 @@ servers:
   - url: 'https://dev.warm.home.come/device-management'
     description: Developer server
 paths:
-  /devices/{userId}:
+  /devices:
     get:
       summary: Get user devices
       parameters:
-        - name: userId
-          in: path
+        - in: header
+          name: userId
           required: true
           schema:
             type: string
@@ -38,12 +38,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /devices/add/{userId}:
+  /devices/add:
     post:
       summary: Add new device
       parameters:
-        - name: userId
-          in: path
+        - in: header
+          name: userId
           required: true
           schema:
             type: string
@@ -79,26 +79,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /devices/remove/{userId}:
-    post:
+  /devices/remove/{deviceId}:
+    delete:
       summary: Remove device
       parameters:
-        - name: userId
+        - name: deviceId
           in: path
           required: true
           schema:
             type: string
             format: uuid
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                deviceId:
-                  type: string
-                  format: uuid
+        - in: header
+          name: userId
+          required: true
+          schema:
+            type: string
+            format: uuid
       responses:
         '200':
           description: Devices removed successfully
@@ -118,12 +114,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /devices/changeState/{userId}:
-    post:
+  /devices/changeState/{deviceId}:
+    patch:
       summary: Change state on device
       parameters:
-        - name: userId
+        - name: deviceId
           in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: header
+          name: userId
           required: true
           schema:
             type: string
@@ -135,9 +137,6 @@ paths:
             schema:
               type: object
               properties:
-                deviceId:
-                  type: string
-                  format: uuid
                 status:
                   type: string
       responses:

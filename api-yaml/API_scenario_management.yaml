@@ -9,12 +9,12 @@ servers:
   - url: 'https://dev.warm.home.come/scenario-management'
     description: Developer server
 paths:
-  /scenarios/{userId}:
+  /scenarios:
     get:
       summary: Get user scenarios
       parameters:
-        - name: userId
-          in: path
+        - in: header
+          name: userId
           required: true
           schema:
             type: string
@@ -38,12 +38,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /scenarios/add/{userId}:
+  /scenarios/add:
     post:
       summary: Add new scenario
       parameters:
-        - name: userId
-          in: path
+        - in: header
+          name: userId
           required: true
           schema:
             type: string
@@ -85,26 +85,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /scenarios/remove/{userId}:
-    post:
+  /scenarios/remove/{scenarioId}:
+    delete:
       summary: Delete scenario
       parameters:
-        - name: userId
+        - name: scenarioId
           in: path
           required: true
           schema:
             type: string
             format: uuid
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                scenarioId:
-                  type: string
-                  format: uuid
+        - in: header
+          name: userId
+          required: true
+          schema:
+            type: string
+            format: uuid
       responses:
         '200':
           description: Scenario removed successfully
@@ -124,12 +120,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /scenarios/changeState/{userId}:
-    post:
+  /scenarios/changeState/{scenarioId}:
+    patch:
       summary: Change state of scenario
       parameters:
-        - name: userId
+        - name: scenarioId
           in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: header
+          name: userId
           required: true
           schema:
             type: string
@@ -141,9 +143,6 @@ paths:
             schema:
               type: object
               properties:
-                scenarioId:
-                  type: string
-                  format: uuid
                 status:
                   type: string
       responses:
@@ -165,12 +164,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /scenarios/reconfigure/{userId}:
+  /scenarios/reconfigure:
     post:
       summary: Reconfigure scenario
       parameters:
-        - name: userId
-          in: path
+        - in: header
+          name: userId
           required: true
           schema:
             type: string

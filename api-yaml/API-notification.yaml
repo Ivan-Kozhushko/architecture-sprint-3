@@ -9,7 +9,7 @@ servers:
   - url: 'https://dev.warm.home.come/notification-management'
     description: Developer server
 paths:
-  /notifications/send:
+  /notifications:
     post:
       summary: Send notification to user
       requestBody:
@@ -45,17 +45,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-
-  /notifications/history/{userId}:
+  /notifications:
     get:
       summary: Get notification history for a user
       parameters:
-        - name: userId
-          in: path
+        - in: header
+          name: userId
           required: true
           schema:
             type: string
             format: uuid
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+            default: 10
+            description: Maximum number of notifications to return
+        - in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+            default: 0
+            description: The offset for pagination
       responses:
         '200':
           description: Notification history received
@@ -108,3 +121,6 @@ components:
               timestamp:
                 type: string
                 format: date-time
+              totalCount:
+                type: integer
+                description: Total number of notifications available

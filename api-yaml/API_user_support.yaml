@@ -9,12 +9,12 @@ servers:
   - url: 'https://dev.warm.home.come/user-support'
     description: Developer server
 paths:
-  /support/createRequest/{userId}:
+  /support/createRequest:
     post:
       summary: Submit a request for technical support
       parameters:
-        - name: userId
-          in: path
+        - in: header
+          name: userId
           required: true
           schema:
             type: string
@@ -50,12 +50,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /support/technician/{userId}:
+  /support/technician:
     post:
       summary: Call a technician to the house
       parameters:
-        - name: userId
-          in: path
+        - in: header
+          name: userId
           required: true
           schema:
             type: string

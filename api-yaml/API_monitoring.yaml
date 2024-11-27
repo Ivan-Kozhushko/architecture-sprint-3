@@ -9,13 +9,13 @@ servers:
   - url: 'https://dev.warm.home.come/monitoring'
     description: Developer server
 paths:
-  /monitoring/sensors/{deviceId}:
+  /monitoring/sensors:
     get:
       summary: Get sensors list
       parameters:
-        - name: deviceId
-          in: path
-          required: true
+        - in: query
+          name: deviceId
+          required: false
           schema:
             type: string
             format: uuid
@@ -38,8 +38,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /monitoring/report/{deviceId}:
-    post:
+  /monitoring/{deviceId}/report/{sensorId}:
+    get:
       summary: Get report from sensor of device
       parameters:
         - name: deviceId
@@ -48,16 +48,12 @@ paths:
           schema:
             type: string
             format: uuid
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                sensorId:
-                  type: string
-                  format: uuid
+        - name: sensorId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
       responses:
         '200':
           description: Report of device sensor retrieve successfully

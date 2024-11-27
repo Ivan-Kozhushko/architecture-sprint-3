@@ -79,12 +79,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /users/profile/{userId}:
+  /users/profile:
     get:
       summary: Get user information
       parameters:
-        - name: userId
-          in: path
+        - in: header
+          name: userId
           required: true
           schema:
             type: string
@@ -109,12 +109,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
-  /users/update/{userId}:
+  /users/update:
     put:
       summary: Update user information
       parameters:
-        - name: userId
-          in: path
+        - in: header
+          name: userId
           required: true
           schema:
             type: string
