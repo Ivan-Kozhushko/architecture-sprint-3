@@ -1,0 +1,155 @@
+openapi: 3.0.3
+info:
+  title: User support API
+  description: API for user support in the "Warm Home" control system.
+  version: 1.0.0
+servers:
+  - url: 'https://warm.home.come/user-support'
+    description: Production server
+  - url: 'https://dev.warm.home.come/user-support'
+    description: Developer server
+paths:
+  /support/createRequest:
+    post:
+      summary: Submit a request for technical support
+      parameters:
+        - in: header
+          name: userId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                messageProblem:
+                  type: string
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Request created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Request'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /support/technician:
+    post:
+      summary: Call a technician to the house
+      parameters:
+        - in: header
+          name: userId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                meetingTime:
+                  type: string
+                  format: date-time
+      responses:
+        '200':
+          description: Meeting with a technician is scheduled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationStatus'
+        '404':
+          description: User/device not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /support/processRequest:
+    post:
+      summary: Process the incoming request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                requestId:
+                  type: string
+                  format: uuid
+                message:
+                  type: string
+                status:
+                  type: string
+      responses:
+        '200':
+          description: Request proceesed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationStatus'
+        '404':
+          description: User/device not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+          description: HTTP status code
+        message:
+          type: string
+          description: Error message
+      required:
+        - code
+        - message
+    Request:
+      type: object
+      properties:
+        reqeustId:
+          type: string
+          format: uuid
+    OperationStatus:
+      type: object
+      properties:
+        operationStatus:
+          type: string

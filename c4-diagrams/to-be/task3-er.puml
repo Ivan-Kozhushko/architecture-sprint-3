@@ -1,0 +1,77 @@
+@startuml
+entity "User" as user {
+    * id : Long
+    --
+    + name : String
+    - email : String
+    + phone : Long
+    + login : String
+    + password : String
+}
+
+entity "House" as house {
+    * id : Long
+    --
+    + address : String
+}
+
+entity "Family" as family {
+    * id : Long
+    --
+    + user_id : Long
+    + house_id : Long
+}
+
+entity "Device" as device {
+    * id : Long
+    --
+    + type_id : Long
+    + house_id : Long
+    + status : enum
+}
+
+entity "DeviceType" as deviceType {
+    * id : Long
+    --
+    + device_id : Long
+    + name : String
+}
+
+entity "DeviceControl" as deviceControl {
+    * id : Long
+    --
+    + device_id : Long
+    -- config
+    - deviceGroup : String
+    - notificationIsOn : boolean
+}
+
+entity "Scenario" as scenario {
+    * id : Long
+    --
+    + device_id : Long
+    + name : String
+    + isOn : boolean
+    + startEvent : Timestamp
+    - endEvent : Timestamp
+}
+
+entity "TelemetryData" as telemetryData {
+    * id : Long
+    --
+    + device_id : Long
+    - scenario_id : Long
+    + value : String
+    + module : String
+    + recordTime : Timestamp
+}
+
+user ||--o{ family : "1..*" 
+house ||--o{ family : "1..*" 
+house ||--o{ device 
+device ||--o| deviceType 
+device ||--o| deviceControl 
+device ||--o{ scenario 
+device ||--o{ telemetryData 
+scenario ||--o{ telemetryData 
+@enduml

@@ -1,0 +1,113 @@
+openapi: 3.0.3
+info:
+  title: Monitoring API
+  description: API for monitoring in the "Warm Home" control system.
+  version: 1.0.0
+servers:
+  - url: 'https://warm.home.come/monitoring'
+    description: Production server
+  - url: 'https://dev.warm.home.come/monitoring'
+    description: Developer server
+paths:
+  /monitoring/sensors:
+    get:
+      summary: Get sensors list
+      parameters:
+        - in: query
+          name: deviceId
+          required: false
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of device sensors retrieve successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sensors'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /monitoring/{deviceId}/report/{sensorId}:
+    get:
+      summary: Get report from sensor of device
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: sensorId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Report of device sensor retrieve successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Report'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+          description: HTTP status code
+        message:
+          type: string
+          description: Error message
+      required:
+        - code
+        - message
+    Sensors:
+      type: object
+      properties:
+        devices:
+          type: array
+          items:
+            type: object
+            properties:
+              sensorId:
+                type: string
+                format: uuid
+              type:
+                type: string
+              status:
+                type: string
+    Report:
+      type: object
+      properties:
+        status:
+          type: string
+        metrics:
+          type: string
+          enum: [temperature, workTime, humidity, ...]

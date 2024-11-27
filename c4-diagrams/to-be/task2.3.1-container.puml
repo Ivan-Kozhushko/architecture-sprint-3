@@ -1,0 +1,53 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title Система "Теплый Дом". Containers.
+
+Person(user, "User", "Пользователь системы Теплый Дом")
+
+Container(mobileApp, "Mobile App", "saa", "Мобильное приложение")
+Container(apiGateway, "API Gateway", "Обрабатывает входящие запросы и направляет их к соответствующим сервисам")
+
+System_Boundary(SmartHomeSystem, 'Система \"Теплый Дом\"') {
+    Container(deviceManagementService, "Device Management Service", "Java/Spring", "Управляет функциями устройств")
+    Container(scenarioManagmentService, "Scenario Management Service", "Java/Spring", "Управляет автоматическими сценариями")
+    Container(userManagmentService, "User Management Service", "Java/Spring","Управляет информацией о пользователях и аутентификацией")
+    Container(deviceMonitoringService, "Device Monitoring Service", "Java/Spring", "Мониторинг и статус устройств")
+    Container(notificationService, "Notification Service", "Java/Spring", "Сервис уведомлений")
+    Container(userSupportService, "User Support Service", "Java/Spring", "Тех. поддержка пользователей")
+
+    ContainerDb(deviceDb, "Device DB", "PostgreSQL", "Хранит информацию об устройствах")
+    ContainerDb(scenarioDb, "Scenari DB", "PostgreSQL", "Хранит информацию об автоматических сценариях")
+    ContainerDb(userDb, "User DB", "PostgreSQL", "Хранит информацию о пользователе")
+    ContainerDb(monitoringDb, "Monitoring DB", "PostgreSQL", "Хранит статус и данные с датчиков")
+    ContainerDb(notificationDb, "Notification DB", "PostgreSQL", "Хранит данные об уведомлениях")
+    ContainerDb(userSupportDb, "User Support DB", "PostgreSQL", "Хранит данные об обращениях пользователей")
+
+    Container(kafka, "Kafka", "Apache Kafka", "Брокер сообщений для асинхронного взаимодействия")
+}
+
+Rel(user, mobileApp, "Использует приложение", "HTTP/REST")
+Rel(mobileApp, apiGateway, "Взаимодействует с", "HTTP/REST")
+Rel(apiGateway, deviceManagementService, "Направляет запрос к", "HTTP/REST")
+Rel(apiGateway, scenarioManagmentService, "Направляет запрос к", "HTTP/REST")
+Rel(apiGateway, userManagmentService, "Направляет запрос к", "HTTP/REST")
+Rel(apiGateway, deviceMonitoringService, "Направляет запрос к", "HTTP/REST")
+Rel(apiGateway, notificationService, "Направляет запрос к", "HTTP/REST")
+Rel(apiGateway, userSupportService, "Направляет запрос к", "HTTP/REST")
+
+Rel(deviceManagementService, deviceDb, "Читает и записывает", "SQL/TCP")
+Rel(scenarioManagmentService, scenarioDb, "Читает и записывает", "SQL/TCP")
+Rel(userManagmentService, userDb, "Читает и записывает", "SQL/TCP")
+Rel(deviceMonitoringService, monitoringDb, "Читает и записывает", "SQL/TCP")
+Rel(notificationService, notificationDb, "Читает и записывает", "SQL/TCP")
+Rel(userSupportService, userSupportDb, "Читает и записывает", "SQL/TCP")
+
+Rel(deviceManagementService, kafka, "Публикует события в", "Топик Kafka")
+Rel(deviceMonitoringService, kafka, "Публикует события в", "Топик Kafka")
+Rel(notificationService, kafka, "Подписан на события от", "Топик Kafka")
+Rel(scenarioManagmentService, kafka, "Подписан на события от", "Топик Kafka")
+
+Container_Ext(sensor, "Sensor", "Датчики", "Отправляет данные в систему")
+Rel(sensor, deviceManagementService, "Отправляет данные к", "HTTP/REST")
+
+@enduml

@@ -1,0 +1,41 @@
+@startuml
+class ScenarioService {
+    + createScenario(deviceId: Long, scenarioEvent:ScenarioEvent): scenarioId
+    + addNewEventToScenario(deviceId: Long, scenarioId: Long, scenarioEvent:ScenarioEvent): void
+    + pauseScenario(deviceId: Long, scenarioId: Long): void
+    + resumeScenario(deviceId: Long, scenarioId: Long): void
+    + deleteScenario(deviceId: Long, scenarioId: Long): void
+    + reconfigureScenario(deviceId: Long, scenarioEvent:ScenarioEvent): void
+}
+
+class ScenarioRepository {
+    + findById(scenarioId: Long): Scenario
+    + save(scenario: Scenario): Scenario
+}
+
+class KafkaConsumer {
+    + subscribeToEvent(event: ScenarioEvent): void
+}
+
+class Scenario {
+    + Long id
+    + Long deviceId
+    + String name
+    + boolean isOn
+    + List<ScenarioEvent> scenarioEvents = new ArrayList<>();
+}
+
+class ScenarioEvent {
+    + Long deviceId
+    + Long scenarioId
+    + String eventType
+    + Timestamp startEvent
+    + Timestamp endEvent
+}
+
+ScenarioService --> ScenarioRepository : uses
+ScenarioService --> KafkaConsumer : uses
+ScenarioService --> Scenario : manipulates
+ScenarioService --> ScenarioEvent : creates
+
+@enduml

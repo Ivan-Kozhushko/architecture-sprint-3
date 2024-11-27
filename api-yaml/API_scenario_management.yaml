@@ -1,0 +1,263 @@
+openapi: 3.0.3
+info:
+  title: Scenario Management API
+  description: API for scenario management in the "Warm Home" control system.
+  version: 1.0.0
+servers:
+  - url: 'https://warm.home.come/scenario-management'
+    description: Production server
+  - url: 'https://dev.warm.home.come/scenario-management'
+    description: Developer server
+paths:
+  /scenarios:
+    get:
+      summary: Get user scenarios
+      parameters:
+        - in: header
+          name: userId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: User scenarios information retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Scenarios'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /scenarios/add:
+    post:
+      summary: Add new scenario
+      parameters:
+        - in: header
+          name: userId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deviceId:
+                  type: string
+                  format: uuid
+                name:
+                  type: string
+                startEvent:
+                  type: string
+                  format: date-time
+                endEvent:
+                  type: string
+                  format: date-time
+      responses:
+        '200':
+          description: Scenario added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Scenario'
+        '404':
+          description: User/device not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /scenarios/remove/{scenarioId}:
+    delete:
+      summary: Delete scenario
+      parameters:
+        - name: scenarioId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: header
+          name: userId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Scenario removed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationStatus'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /scenarios/changeState/{scenarioId}:
+    patch:
+      summary: Change state of scenario
+      parameters:
+        - name: scenarioId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: header
+          name: userId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+      responses:
+        '200':
+          description: Scenario state changed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationStatus'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /scenarios/reconfigure:
+    post:
+      summary: Reconfigure scenario
+      parameters:
+        - in: header
+          name: userId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                scenarioId:
+                  type: string
+                  format: uuid
+                name:
+                  type: string
+                startEvent:
+                  type: string
+                  format: date-time
+                endEvent:
+                  type: string
+                  format: date-time
+      responses:
+        '200':
+          description: The scenario has been successfully reconfigured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationStatus'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+          description: HTTP status code
+        message:
+          type: string
+          description: Error message
+      required:
+        - code
+        - message
+    Scenarios:
+      type: object
+      properties:
+        devices:
+          type: array
+          items:
+            type: object
+            properties:
+              scenarioId:
+                type: string
+                format: uuid
+              deviceId:
+                type: string
+                format: uuid
+              name:
+                type: string
+              isOn:
+                type: boolean
+              startEvent:
+                type: string
+                format: date-time
+              endEvent:
+                type: string
+                format: date-time
+    Scenario:
+      type: object
+      properties:
+        scenarioId:
+          type: string
+          format: uuid
+    OperationStatus:
+      type: object
+      properties:
+        operationStatus:
+          type: string

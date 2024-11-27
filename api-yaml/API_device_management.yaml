@@ -1,0 +1,203 @@
+openapi: 3.0.3
+info:
+  title: Device Management API
+  description: API for device management in the "Warm Home" control system.
+  version: 1.0.0
+servers:
+  - url: 'https://warm.home.come/device-management'
+    description: Production server
+  - url: 'https://dev.warm.home.come/device-management'
+    description: Developer server
+paths:
+  /devices:
+    get:
+      summary: Get user devices
+      parameters:
+        - in: header
+          name: userId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: User devices information retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Devices'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /devices/add:
+    post:
+      summary: Add new device
+      parameters:
+        - in: header
+          name: userId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                houseId:
+                  type: string
+                  format: uuid
+      responses:
+        '200':
+          description: Devices added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /devices/remove/{deviceId}:
+    delete:
+      summary: Remove device
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: header
+          name: userId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Devices removed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationStatus'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /devices/changeState/{deviceId}:
+    patch:
+      summary: Change state on device
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: header
+          name: userId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+      responses:
+        '200':
+          description: State changed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationStatus'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+          description: HTTP status code
+        message:
+          type: string
+          description: Error message
+      required:
+        - code
+        - message
+    Devices:
+      type: object
+      properties:
+        devices:
+          type: array
+          items:
+            type: object
+            properties:
+              deviceId:
+                type: string
+                format: uuid
+              type:
+                type: string
+              status:
+                type: string
+              address:
+                type: string
+    Device:
+      type: object
+      properties:
+        deviceId:
+          type: string
+          format: uuid
+    OperationStatus:
+      type: object
+      properties:
+        operationStatus:
+          type: string
